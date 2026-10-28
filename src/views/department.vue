@@ -1,8 +1,12 @@
 <template>
     <div id="app">
 
-        <div>
-            <el-button type="success" round size="medium" @click="dialog = true" >添加部门</el-button>
+        <div class="page-header">
+            <div>
+                <span class="title">部门管理</span>
+                <span class="subtitle">维护部门账号、人数与收件邮箱</span>
+            </div>
+            <el-button type="primary" icon="el-icon-plus" size="medium" @click="dialog = true">添加部门</el-button>
         </div>
 <!--添加部门或者修改部门的弹出框-->
         <el-drawer
@@ -45,7 +49,7 @@
                 :data="deps.filter(data => !search || data.depName.toLowerCase().includes(search.toLowerCase())||
                 data.depNo.toLowerCase().includes(search.toLowerCase()))"
                 style="width: 100%;text-align: center"
-                :row-class-name="tableRowClassName">
+>
             <el-table-column
                     prop="depNo"
                     label="部门编号"
@@ -86,40 +90,11 @@
                             placeholder="输入部门名称或者编号搜索"/>
                 </template>
                 <template slot-scope="scope">
-
-                    <el-button
-                            size="medium"
-                            @click="handleaddEmployee(scope.row)"
-                            icon="el-icon-plus"
-                            circle
-                            type="success"
-
-                    ></el-button>
-
-
-                    <el-button
-                            size="medium"
-                            @click="handleEdit(scope.$index, scope.row)"
-                            icon="el-icon-edit"
-                            circle
-                            type="warning"
-                            style="margin-right: 10px"
-                    ></el-button>
-
-                    <template>
-                        <el-popconfirm
-                                title="确定删除该部门吗？"
-                                @onConfirm="handleDelete(scope.$index, scope.row)"
-                        >
-                            <el-button
-                                    slot="reference"
-                                    size="medium"
-                                    type="danger"
-                                    circle
-                                    icon="el-icon-delete"
-                            ></el-button>
-                        </el-popconfirm>
-                    </template>
+                    <el-button type="text" icon="el-icon-plus" @click="handleaddEmployee(scope.row)">添加员工</el-button>
+                    <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-popconfirm title="确定删除该部门吗？" @confirm="handleDelete(scope.$index, scope.row)">
+                        <el-button slot="reference" type="text" icon="el-icon-delete" style="color:#f04438">删除</el-button>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
@@ -130,7 +105,6 @@
             <el-table
                     :data="employees"
                     align="center"
-                    :row-class-name="tableRowClassName"
             >
                 <el-table-column
                         prop="eno"
@@ -142,32 +116,12 @@
                 </el-table-column>
 
 
-                <el-table-column  label="操作" align="center" >
+                <el-table-column  label="操作" align="center" width="180">
                     <template slot-scope="scope">
-
-                        <el-button
-                                size="medium"
-                                @click="handleEditEmployee(scope.row)"
-                                icon="el-icon-edit"
-                                circle
-                                type="warning"
-                                style="margin-right: 10px"
-                        ></el-button>
-
-                        <template>
-                            <el-popconfirm
-                                    title="确定删除该员工吗？"
-                                    @onConfirm="handleDeleteEmployee(scope.row)"
-                            >
-                                <el-button
-                                        slot="reference"
-                                        size="medium"
-                                        type="danger"
-                                        circle
-                                        icon="el-icon-delete"
-                                ></el-button>
-                            </el-popconfirm>
-                        </template>
+                        <el-button type="text" icon="el-icon-edit" @click="handleEditEmployee(scope.row)">编辑</el-button>
+                        <el-popconfirm title="确定删除该员工吗？" @confirm="handleDeleteEmployee(scope.row)">
+                            <el-button slot="reference" type="text" icon="el-icon-delete" style="color:#f04438">删除</el-button>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>
 

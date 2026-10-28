@@ -1,5 +1,11 @@
 <template>
     <div>
+        <div class="page-header">
+            <div>
+                <span class="title">工作台</span>
+                <span class="subtitle">查看会议室使用日历与系统使用说明</span>
+            </div>
+        </div>
         <el-row>
             <el-col :span="12">
                 <div >

@@ -9,7 +9,7 @@
                         :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
-                        :row-class-name="tableRowClassName">
+>
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
@@ -58,15 +58,9 @@
                         <template slot-scope="scope" v-if="!isEmployee">
                             <el-popconfirm
                                     title="确定删除该申请记录吗？"
-                                    @onConfirm="handleDelete(scope.row)"
+                                    @confirm="handleDelete(scope.row)"
                             >
-                                <el-button
-                                        slot="reference"
-                                        size="medium"
-                                        type="danger"
-                                        circle
-                                        icon="el-icon-delete"
-                                ></el-button>
+                                <el-button slot="reference" type="text" icon="el-icon-delete" style="color:#f04438">删除</el-button>
                             </el-popconfirm>
                         </template>
                     </el-table-column>
@@ -90,7 +84,7 @@
                         :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
-                        :row-class-name="tableRowClassName">
+>
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
@@ -163,7 +157,7 @@
                         :data="formData.filter(data => !search || data.theme.toLowerCase().includes(search.toLowerCase())||
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
-                        :row-class-name="tableRowClassName">
+>
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
@@ -216,15 +210,9 @@
                         <template slot-scope="scope"  v-if="!isEmployee">
                             <el-popconfirm
                                     title="确定删除该申请记录吗？"
-                                    @onConfirm="handleDelete(scope.row)"
+                                    @confirm="handleDelete(scope.row)"
                             >
-                                <el-button
-                                        slot="reference"
-                                        size="medium"
-                                        type="danger"
-                                        circle
-                                        icon="el-icon-delete"
-                                ></el-button>
+                                <el-button slot="reference" type="text" icon="el-icon-delete" style="color:#f04438">删除</el-button>
                             </el-popconfirm>
                         </template>
                     </el-table-column>

@@ -21,7 +21,7 @@
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase())
                 || data.depName.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
-                        :row-class-name="tableRowClassName">
+>
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
@@ -71,22 +71,11 @@
                                     placeholder="输入主题、门牌号、楼层、部门"/>
                         </template>
                         <template slot-scope="scope">
-                            <el-button
-                                    size="small"
-                                    @click="access(scope.row)"
-                                    round
-                                    type="success"
-                                    style="margin-right: 10px"
-                            >通 过</el-button>
-
-                                    <el-button
-                                            size="small"
-                                            type="danger"
-                                           round
-                                            @click="reject(scope.row)"
-                                    >驳 回</el-button>
-
-                            </template>
+                            <el-button type="text" icon="el-icon-circle-check"
+                                       style="color:#17b26a" @click="access(scope.row)">通过</el-button>
+                            <el-button type="text" icon="el-icon-circle-close"
+                                       style="color:#f04438" @click="reject(scope.row)">驳回</el-button>
+                        </template>
                     </el-table-column>
 
                 </el-table>
@@ -118,7 +107,7 @@
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase())
                  || data.depName.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
-                        :row-class-name="tableRowClassName">
+>
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
@@ -174,15 +163,9 @@
                         <template slot-scope="scope">
                             <el-popconfirm
                                     title="确定删除该申请记录吗？"
-                                    @onConfirm="handleDelete(scope.row)"
+                                    @confirm="handleDelete(scope.row)"
                             >
-                                <el-button
-                                        slot="reference"
-                                        size="medium"
-                                        type="danger"
-                                        circle
-                                        icon="el-icon-delete"
-                                ></el-button>
+                                <el-button slot="reference" type="text" icon="el-icon-delete" style="color:#f04438">删除</el-button>
                             </el-popconfirm>
                         </template>
                     </el-table-column>
@@ -215,7 +198,7 @@
                 data.roomNo.toLowerCase().includes(search.toLowerCase()) ||  data.roomFloor.toLowerCase().includes(search.toLowerCase())
                  || data.depName.toLowerCase().includes(search.toLowerCase()))"
                         style="width: 100%"
-                        :row-class-name="tableRowClassName">
+>
                     <el-table-column type="expand">
                         <template slot-scope="props">
                             <el-form label-position="left" inline class="demo-table-expand">
@@ -274,15 +257,9 @@
                         <template slot-scope="scope">
                             <el-popconfirm
                                     title="确定删除该申请记录吗？"
-                                    @onConfirm="handleDelete(scope.row)"
+                                    @confirm="handleDelete(scope.row)"
                             >
-                                <el-button
-                                        slot="reference"
-                                        size="medium"
-                                        type="danger"
-                                        circle
-                                        icon="el-icon-delete"
-                                ></el-button>
+                                <el-button slot="reference" type="text" icon="el-icon-delete" style="color:#f04438">删除</el-button>
                             </el-popconfirm>
                         </template>
                     </el-table-column>

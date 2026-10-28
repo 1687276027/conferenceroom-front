@@ -55,7 +55,7 @@
         <el-table :data="conferenceRooms.filter(data => !this.search || data.roomNo.toLowerCase().includes(this.search.toLowerCase())||
                 data.roomFloor.toLowerCase().includes(this.search.toLowerCase()) || data.roomType.toLowerCase().includes(this.search.toLowerCase()))"
                   style="width: 100%;text-align: center"
-                  :row-class-name="this.tableRowClassName">
+>
             <el-table-column
                     prop="roomNo"
                     label="门牌号"
@@ -143,8 +143,8 @@
                             type="datetime"
                             placeholder="选择开始日期时间"
                             :picker-options="pickerOptions"
-                            @blur="searchTimeConflict"
-                            default-time="10:00:00"
+                            @change="searchTimeConflict"
+                            :default-time="defaultStartTime"
                             value-format="yyyy-MM-dd HH:mm:ss">
                     </el-date-picker>
                 </el-form-item>
@@ -156,8 +156,8 @@
                             type="datetime"
                             placeholder="选择结束日期时间"
                             :picker-options="pickerOptions"
-                            @blur="searchTimeConflict"
-                            default-time="10:30:00"
+                            @change="searchTimeConflict"
+                            :default-time="defaultEndTime"
                             value-format="yyyy-MM-dd HH:mm:ss">
                     </el-date-picker>
                 </el-form-item>
@@ -174,7 +174,6 @@
             <el-table
                     :data="devices"
                     style="text-align: center"
-                    :row-class-name="tableRowClassName"
             >
                 <el-table-column
                         prop="dname"
@@ -219,6 +218,11 @@
                         return time.getTime() < Date.now() - 8.64e7;
                     },
                 },
+
+                //日期选择器里只选日期时  默认带出的时刻
+                //打开弹窗时按"当前时间往后推"重新算一次  避免默认成10点这种已经过去的时间
+                defaultStartTime: '10:00:00',
+                defaultEndTime: '10:30:00',
 
                 //申请弹出框
                 dialogFormApply:false,
@@ -285,7 +289,7 @@
                     ],
                     digest: [
                         {required: true, message: '请输入会议介绍', trigger: 'blur'},
-                        {min: 5, max: 50, message: '长度在 5 到 124 个字符', trigger: 'blur'}
+                        {min: 5, max: 50, message: '长度在 5 到 50 个字符', trigger: 'blur'}
                     ],
                     personCount: [
                         {required: true, message: '请输入参与会议人数', trigger: 'blur'},
@@ -343,110 +347,185 @@
                 }
             },
 
-            //当选择时间的失去焦点时  去异步请求后台 是否时间允许 注意结束时间不能早于开始时间
-            //这里判断使用！==null 那么最好一开始定义data时也用null  然后当不满足条件时 也是设置为null
+            //打开申请弹窗时  按当前时间重算选择器只选日期时带出的默认时刻
+            //开始时间取当前时间往后推30分钟  结束时间取开始时间往后推1小时
+            //这样即使选的是今天  也不会默认成10点这种已经过去的时间
+            setDefaultTime(){
+                let pad = n => (n < 10 ? '0' + n : '' + n);
+                let fmt = d => pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':00';
+
+                let start = new Date(new Date().getTime() + 30*60*1000);
+                start.setSeconds(0,0);
+                //会议室10点之后才能使用  算出来早于10点就默认成10点
+                if(start.getHours() < 10){
+                    start.setHours(10,0,0,0);
+                }
+                let end = new Date(start.getTime() + 60*60*1000);
+
+                this.defaultStartTime = fmt(start);
+                this.defaultEndTime = fmt(end);
+            },
+
+            //把 "yyyy-MM-dd HH:mm:ss" 转成时间戳  兼容部分浏览器不支持该格式的情况
+            parseTime(timeStr){
+                return new Date(String(timeStr).replace(/-/g,'/')).getTime();
+            },
+
+            //本地时间规则校验  只做判断不发请求
+            //校验通过返回 null  不通过返回错误提示  两个时间还没选全时也返回 null（交给表单的必填校验）
+            //规则：结束晚于开始、会议最短10分钟、开始时间不能早于当前时间、使用时间10-23点
+            validateTime(){
+                let startTime = this.record.conferenceRecord.startTime;
+                let endTime = this.record.conferenceRecord.endTime;
+                if(!startTime || !endTime){
+                    return null;
+                }
+                let start = this.parseTime(startTime);
+                let end = this.parseTime(endTime);
+                if(isNaN(start) || isNaN(end)){
+                    return '时间格式有误，请重新选择';
+                }
+                if(start >= end){
+                    return '结束时间必须晚于开始时间';
+                }
+                if(end - start < 10*60*1000){
+                    return '会议时间最短为10分钟';
+                }
+                //开始时间不能早于当前时间  留10分钟容错（与后端一致）  这样选择"此刻"、或者填完表停留一会儿也能正常提交
+                if(start < new Date().getTime() - 10*60*1000){
+                    return '开始时间不能早于当前时间，请重新选择';
+                }
+                //会议室的使用时间只能是早上10点到晚上23点
+                if(new Date(start).getHours() < 10 || new Date(end).getHours() >= 23){
+                    return '会议室的使用时间为每天的10:00-23:00';
+                }
+                return null;
+            },
+
+            //选择时间后触发  先做本地校验 再请求后台判断该时间段是否已被占用
+            //注意：校验不通过只提示 不再清空用户已经选好的时间  避免用户反复重选
             searchTimeConflict(){
-                if(this.record.conferenceRecord.startTime!==null  && this.record.conferenceRecord.endTime!==null) {
+                //只选了一个时间 先不校验 等两个时间都选好
+                if(!this.record.conferenceRecord.startTime || !this.record.conferenceRecord.endTime){
+                    return Promise.resolve(false);
+                }
+                let error = this.validateTime();
+                if(error){
+                    this.$message({
+                        message: error,
+                        type:'error',
+                        center: true
+                    });
+                    return Promise.resolve(false);
+                }
+                return this.checkTimeConflict(true);
+            },
 
-                    //转为时间戳
-                    let startTime = new Date(this.record.conferenceRecord.startTime);
-                    let endTime = new Date(this.record.conferenceRecord.endTime);
-                    let roomId = this.record.apply.roomId;
-                    console.log(startTime.getHours(),endTime.getHours())
-
-                    //结束时间必须大于开始时间 并且会议最短为10分钟
-                    if (startTime.getTime() > endTime.getTime() || startTime.getTime()+(10*60*1000)>endTime.getTime()) {
-                        this.$message({
-                            message: '结束时间必须晚于开始时间，且会议时间最短为10分钟',
-                            type: 'error',
-                            center: true
-                        });
-                        this.record.conferenceRecord.startTime = null;
-                        this.record.conferenceRecord.endTime = null;
-                    } else if(startTime.getTime() < new Date().getTime()+15*60*1000){
-                        //会议的开始时间最快也只能是当前时间再+15分钟的间隔
-                        this.$message({
-                            message: '开始时间至少比当前时间晚15分钟',
-                            type: 'error',
-                            center: true
-                        });
-                        this.record.conferenceRecord.startTime = null;
-                        this.record.conferenceRecord.endTime = null;
-                    } else if(startTime.getHours()<10 || endTime.getHours()>=23){
-                        //会议室的使用时间只能是早上10点到晚上23点
-                        //注意是10点以后 23点以前 所以是大于等于23
-                        this.$message({
-                            message: '会议室的使用时间为10-23点',
-                            type: 'error',
-                            center: true
-                        });
-                        this.record.conferenceRecord.startTime = null;
-                        this.record.conferenceRecord.endTime = null;
-                    } else {
-
-                        let _this = this;
-                        _this.axios.get("/apply/searchtimeconflict/" + roomId + "/" + _this.record.conferenceRecord.startTime
-                            + "/" + _this.record.conferenceRecord.endTime, {
-                            headers: {
-                                "Authorization": localStorage.getItem("token")
-                            }
-                        }).then(res => {
-                            if (res.data.data === '1') {
-
-
-                                this.$message({
+            //请求后台 查询所选会议室在所选时间段内是否与审核通过的会议冲突
+            //showSuccess为true时  校验通过会提示"时间允可"（用户手动选时间时）
+            checkTimeConflict(showSuccess){
+                let _this = this;
+                let startTime = this.record.conferenceRecord.startTime;
+                let endTime = this.record.conferenceRecord.endTime;
+                let roomId = this.record.apply.roomId;
+                return new Promise(resolve=>{
+                    _this.axios.get("/apply/searchtimeconflict/" + roomId + "/" + startTime
+                        + "/" + endTime, {
+                        headers: {
+                            "Authorization": localStorage.getItem("token")
+                        }
+                    }).then(res => {
+                        if (res.data.data === '1') {
+                            if(showSuccess){
+                                _this.$message({
                                     message: '时间允可',
                                     type: 'success',
                                     center: true
                                 });
-                            } else {
-                                this.$message({
-                                    message: '时间冲突，请选择其他时间或者会议室',
-                                    type: 'error',
-                                    center: true
-                                });
-                                _this.record.conferenceRecord.startTime = null;
-                                _this.record.conferenceRecord.endTime = null;
                             }
-                        })
-                    }
-                }
+                            resolve(true);
+                        } else {
+                            _this.$message({
+                                message: '时间冲突，请选择其他时间或者会议室',
+                                type: 'error',
+                                center: true
+                            });
+                            resolve(false);
+                        }
+                    }).catch(()=>{
+                        resolve(false);
+                    })
+                })
             },
 
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
-                    if (valid) {
-
-                          let depId = this.record.conferenceRecord.depId;
-                            this.record.apply.depId = depId;
-                            let _this = this;
-                            _this.axios.post("/apply/addbyadmin", _this.record, {
-                                headers: {
-                                    "Authorization": localStorage.getItem("token")
-                                }
-                            }).then(res => {
-                                this.$message({
-                                    message: '紧急申请成功',
-                                    type: 'success',
-                                    center: true
-                                });
-                                _this.depId = '';
-                                _this.dialogFormApply = false;
-                                _this.record.conferenceRecord = {
-                                    "startTime": null,
-                                    "endTime": null,
-                                    "personCount": '',
-                                    "theme": "",
-                                    "digest": "",
-                                }
-                            });
-
-                    }else{
-                            console.log('error submit!!');
-                            return false;
+                    if (!valid) {
+                        console.log('error submit!!');
+                        return false;
                     }
 
+                    //表单必填校验通过后 再完整校验一次时间
+                    //因为有的浏览器不一定触发change 只靠选时间时的校验可能会漏掉
+                    let startTime = this.record.conferenceRecord.startTime;
+                    let endTime = this.record.conferenceRecord.endTime;
+                    if (!startTime || !endTime) {
+                        this.$message({
+                            message: '请选择会议的开始时间和结束时间',
+                            type: 'error',
+                            center: true
+                        });
+                        return false;
+                    }
+                    let error = this.validateTime();
+                    if (error) {
+                        this.$message({
+                            message: error,
+                            type: 'error',
+                            center: true
+                        });
+                        return false;
+                    }
+
+                    let depId = this.record.conferenceRecord.depId;
+                    this.record.apply.depId = depId;
+                    let _this = this;
+                    //提交前再跟后台确认一次时间是否冲突 防止页面停留太久期间被别人占用
+                    _this.checkTimeConflict(false).then(ok => {
+                        if (!ok) {
+                            return;
+                        }
+                        _this.axios.post("/apply/addbyadmin", _this.record, {
+                            headers: {
+                                "Authorization": localStorage.getItem("token")
+                            }
+                        }).then(res => {
+                            _this.$message({
+                                message: '申请成功',
+                                type: 'success',
+                                center: true
+                            });
+                            _this.dialogFormApply = false;
+                            _this.resetRecord();
+                        })
+                    })
                 })
+            },
+
+            //提交成功后清空表单 并把校验状态一起清掉 避免下次打开还带着红字提示
+            resetRecord(){
+                this.record.conferenceRecord = {
+                    "startTime": null,
+                    "endTime": null,
+                    "personCount": '',
+                    "theme": "",
+                    "digest": "",
+                    "depId": ''
+                };
+                this.record.apply.depId = '';
+                if(this.$refs['applyForm']){
+                    this.$refs['applyForm'].clearValidate();
+                }
             },
 
 
@@ -496,6 +575,7 @@
             },
             handleApply(index, row) {
                 this.dialogFormApply = true;
+                this.setDefaultTime();
                 this.record.apply.roomId = row.roomId;
                 this.record.apply.roomSize = row.roomSize;
 

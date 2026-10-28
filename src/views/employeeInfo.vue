@@ -19,7 +19,6 @@
 
                     <el-table
                             :data="tableData"
-                            :row-class-name="tableRowClassName"
                             style="width: 380px"
                             size="medium">
                         <el-table-column

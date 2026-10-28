@@ -1,0 +1,312 @@
+/* ===========================================================
+   会议室管理系统 - 全局主题
+   参考主流会议/协作后台（飞书、腾讯会议、钉钉）的视觉规范
+   =========================================================== */
+
+:root {
+    --brand: #2f6bff;
+    --brand-dark: #1d4ed8;
+    --brand-light: #eaf1ff;
+    --text-main: #1f2d3d;
+    --text-sub: #5a6b82;
+    --text-light: #8ea0b8;
+    --line: #eef1f6;
+    --bg: #f4f6fa;
+    --card-shadow: 0 2px 14px rgba(31, 45, 61, 0.06);
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
+        "Microsoft YaHei", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 滚动条 ---------- */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d6dce8;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #c2cbdb;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ---------- 通用页面容器 ---------- */
+.page-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px 22px;
+    box-shadow: var(--card-shadow);
+}
+
+/* 页面顶部：标题 + 操作按钮 */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.page-header .title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-main);
+    position: relative;
+    padding-left: 12px;
+    line-height: 22px;
+}
+
+.page-header .title::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    width: 4px;
+    height: 16px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #4d85ff, var(--brand));
+}
+
+.page-header .subtitle {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-left: 12px;
+    font-weight: 400;
+}
+
+/* ---------- 按钮 ---------- */
+.el-button {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.el-button--primary {
+    background: linear-gradient(135deg, #4d85ff, var(--brand));
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(47, 107, 255, 0.24);
+}
+
+.el-button--primary:hover,
+.el-button--primary:focus {
+    background: linear-gradient(135deg, #3d76ff, var(--brand-dark));
+    border-color: transparent;
+    box-shadow: 0 6px 16px rgba(47, 107, 255, 0.3);
+}
+
+.el-button--success {
+    background: #17b26a;
+    border-color: #17b26a;
+}
+
+.el-button--warning {
+    background: #f79009;
+    border-color: #f79009;
+}
+
+.el-button--danger {
+    background: #f04438;
+    border-color: #f04438;
+}
+
+.el-button--text {
+    color: var(--brand);
+    font-weight: 500;
+    padding: 0 6px;
+}
+
+.el-button--text:hover {
+    color: var(--brand-dark);
+}
+
+/* 表格里的图标圆形按钮统一收敛一点 */
+.el-table .el-button.is-circle {
+    padding: 9px;
+}
+
+/* ---------- 输入类 ---------- */
+.el-input__inner,
+.el-textarea__inner {
+    border-radius: 8px;
+    border-color: #e2e8f2;
+    background: #fbfcfe;
+}
+
+.el-input__inner:hover,
+.el-textarea__inner:hover {
+    border-color: #c9d6ea;
+}
+
+.el-input__inner:focus,
+.el-textarea__inner:focus {
+    border-color: var(--brand);
+    background: #fff;
+}
+
+.el-select .el-input.is-focus .el-input__inner {
+    border-color: var(--brand);
+}
+
+/* ---------- 卡片 / 弹层 ---------- */
+.el-card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: var(--card-shadow);
+}
+
+.el-dialog {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(20, 34, 61, 0.18);
+}
+
+.el-dialog__header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--line);
+}
+
+.el-dialog__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.el-dialog__body {
+    padding: 22px;
+}
+
+.el-drawer {
+    border-radius: 16px 0 0 16px;
+}
+
+.el-message {
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(20, 34, 61, 0.14);
+}
+
+.el-message-box {
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 18px 50px rgba(20, 34, 61, 0.18);
+}
+
+/* ---------- 表格 ---------- */
+.el-table {
+    color: var(--text-main);
+    font-size: 14px;
+}
+
+.el-table::before {
+    display: none;
+}
+
+.el-table th.el-table__cell {
+    background: #f7f9fc !important;
+    color: var(--text-sub);
+    font-weight: 600;
+    border-bottom: 1px solid var(--line);
+    padding: 12px 0;
+}
+
+.el-table td.el-table__cell {
+    border-bottom: 1px solid var(--line);
+    padding: 12px 0;
+}
+
+.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
+    background: #f4f8ff !important;
+}
+
+.el-table__expanded-cell[class*="cell"] {
+    background: #fbfcfe;
+}
+
+/* ---------- 标签 / 分页 ---------- */
+.el-tag {
+    border-radius: 6px;
+    border: none;
+    padding: 0 10px;
+}
+
+.el-pagination {
+    padding: 16px 0 4px;
+    text-align: right;
+}
+
+.el-pagination button,
+.el-pager li {
+    border-radius: 8px;
+}
+
+.el-tabs__item {
+    font-size: 14px;
+    color: var(--text-sub);
+}
+
+.el-tabs__item.is-active {
+    color: var(--brand);
+    font-weight: 600;
+}
+
+.el-tabs__active-bar {
+    background: var(--brand);
+    height: 3px;
+    border-radius: 3px;
+}
+
+.el-tabs__nav-wrap::after {
+    height: 1px;
+    background: var(--line);
+}
+
+/* ---------- 折叠面板 / 日历 ---------- */
+.el-calendar {
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    overflow: hidden;
+}
+
+.el-calendar-table .el-calendar-day {
+    height: 68px;
+}
+
+.el-alert {
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+}
+
+/* 条件筛选行 */
+.mConditions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.mConditions .el-select,
+.mConditions .el-input {
+    width: 180px;
+}
+
+.mConditions .mselect {
+    margin-left: 0;
+}

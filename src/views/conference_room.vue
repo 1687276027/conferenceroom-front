@@ -1,8 +1,12 @@
 <template>
         <div id="app">
 
-            <div class="maddButton">
-                <el-button type="success" round size="medium" @click="dialog = true" >添加会议室</el-button>
+            <div class="page-header">
+                <div>
+                    <span class="title">会议室管理</span>
+                    <span class="subtitle">维护会议室信息、可用状态与内部设备</span>
+                </div>
+                <el-button type="primary" icon="el-icon-plus" size="medium" @click="dialog = true">添加会议室</el-button>
             </div>
             <el-drawer
                     title="添加/修改会议室"
@@ -81,7 +85,7 @@
             <el-table :data="conferenceRooms.filter(data => !this.search || data.roomNo.toLowerCase().includes(this.search.toLowerCase())||
                 data.roomFloor.toLowerCase().includes(this.search.toLowerCase()) || data.roomType.toLowerCase().includes(this.search.toLowerCase()))"
                     style="width: 100%;text-align: center"
-                    :row-class-name="this.tableRowClassName">
+>
                 <el-table-column
                         prop="roomNo"
                         label="门牌号"
@@ -138,39 +142,11 @@
 
 
                     <template slot-scope="scope">
-                        <el-button
-                                size="medium"
-                                @click="handleaddDevice(scope.row)"
-                                icon="el-icon-plus"
-                                circle
-                                type="success"
-
-                        ></el-button>
-
-
-                        <el-button
-                                size="medium"
-                                @click="handleEdit(scope.$index, scope.row)"
-                                icon="el-icon-edit"
-                                circle
-                                type="warning"
-                                style="margin-right: 10px"
-                        ></el-button>
-
-                        <template>
-                            <el-popconfirm
-                                    title="确定删除该部门吗？"
-                                    @onConfirm="handleDelete(scope.$index, scope.row)"
-                            >
-                                <el-button
-                                        slot="reference"
-                                        size="medium"
-                                        type="danger"
-                                        circle
-                                        icon="el-icon-delete"
-                                ></el-button>
-                            </el-popconfirm>
-                        </template>
+                        <el-button type="text" icon="el-icon-plus" @click="handleaddDevice(scope.row)">添加设备</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                        <el-popconfirm title="确定删除该会议室吗？" @confirm="handleDelete(scope.$index, scope.row)">
+                            <el-button slot="reference" type="text" icon="el-icon-delete" style="color:#f04438">删除</el-button>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>
             </el-table>
@@ -181,7 +157,6 @@
                 <el-table
                         :data="devices"
                         align="center"
-                        :row-class-name="tableRowClassName"
                         >
                     <el-table-column
                             prop="dname"
@@ -194,31 +169,12 @@
                         </template>
                     </el-table-column>
 
-                    <el-table-column  label="操作" align="center" >
+                    <el-table-column  label="操作" align="center" width="160">
                         <template slot-scope="scope">
-                            <el-button
-                                    size="medium"
-                                    @click="handleEditDevice(scope.row)"
-                                    icon="el-icon-edit"
-                                    circle
-                                    type="warning"
-                                    style="margin-right: 10px"
-                            ></el-button>
-
-                            <template>
-                                <el-popconfirm
-                                        title="确定删除该设备吗？"
-                                        @onConfirm="handleDeleteDevice(scope.row)"
-                                >
-                                    <el-button
-                                            slot="reference"
-                                            size="medium"
-                                            type="danger"
-                                            circle
-                                            icon="el-icon-delete"
-                                    ></el-button>
-                                </el-popconfirm>
-                            </template>
+                            <el-button type="text" icon="el-icon-edit" @click="handleEditDevice(scope.row)">编辑</el-button>
+                            <el-popconfirm title="确定删除该设备吗？" @confirm="handleDeleteDevice(scope.row)">
+                                <el-button slot="reference" type="text" icon="el-icon-delete" style="color:#f04438">删除</el-button>
+                            </el-popconfirm>
                         </template>
                     </el-table-column>
 

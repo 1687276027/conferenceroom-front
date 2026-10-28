@@ -1,56 +1,39 @@
 <template>
 
     <div id="body">
-        <el-row style="margin-top: 200px">
+        <div class="mask"></div>
 
-<!--            登录表单-->
-            <el-col :span="7" :offset="5" class="mborder">
-                <h3 style="text-align: center;position: relative;margin-top: 10px"><i class="iconfont iconhuiyishi"/>会议室管理系统</h3>
+        <div class="login-box">
+            <div class="login-brand">
+                <i class="iconfont iconhuiyishi"></i>
+                <h1>2027lgy 会议室管理系统</h1>
+                <p>Conference Room Management System</p>
+            </div>
 
-                <el-form :model="ruleForm"  status-icon :rules="rules"   ref="ruleForm"  class="demo-ruleForm"
-                         @keyup.enter.native="submitForm('ruleForm')">
-                   <el-form-item    prop="username">
-                       <el-input prefix-icon="iconfont iconxiaoren" v-model="ruleForm.username"></el-input>
-                    </el-form-item>
+            <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="login-form"
+                     @keyup.enter.native="submitForm('ruleForm')">
+                <el-form-item prop="username">
+                    <el-input placeholder="请输入账号" prefix-icon="el-icon-user" v-model="ruleForm.username"></el-input>
+                </el-form-item>
 
-                    <el-form-item  prop="password">
-                        <el-input prefix-icon="iconfont iconmima " type="password" v-model="ruleForm.password"></el-input>
-                    </el-form-item>
+                <el-form-item prop="password">
+                    <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" show-password
+                              type="password" v-model="ruleForm.password"></el-input>
+                </el-form-item>
 
-                    <el-form-item>
-                        <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-                        <el-button @click="resetForm('ruleForm')">重置</el-button>
-                    </el-form-item>
-                </el-form>
-            </el-col>
+                <el-form-item>
+                    <el-button type="primary" class="login-btn" @click="submitForm('ruleForm')">登 录</el-button>
+                    <el-button class="reset-btn" @click="resetForm('ruleForm')">重 置</el-button>
+                </el-form-item>
+            </el-form>
 
-<!--            登录提醒-->
-            <el-col :span="4" :offset="1" class="mborder mwarn" >
-                <el-card class="box-card">
-                    <div slot="header" class="clearfix">
-                        <el-alert
-                                title="登录提示"
-                                type="warning"
-                                :closable="false">
-                        </el-alert>
-                    </div>
-                    <el-alert
-                            title="账号为部门编号，初始密码为123456，可登录后自行修改"
-                            type="info"
-                            show-icon
-                    :closable="false">
-                    </el-alert>
-                    <el-alert
-                            title="联系管理员：178067066xx/619122012@qq.com"
-                            type="info"
-                            show-icon
-                            :closable="false">
-                    </el-alert>
-                </el-card>
-            </el-col>
-        </el-row>
+            <div class="login-tip">
+                <p><i class="el-icon-info"></i> 部门账号为部门编号，员工账号为工号，初始密码 123456，登录后可自行修改</p>
+                <p>如需帮助请联系管理员：178067066xx / 619122012@qq.com</p>
+            </div>
+        </div>
 
-
+        <div class="login-footer">© 2027 lgy 会议室管理系统</div>
     </div>
 </template>
 
@@ -127,36 +110,107 @@
         background-image: url('../assets/images/meetingroom.jpg');
         background-position: center center;
         background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .mborder{
-        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
+    /* 背景压暗一层，保证表单可读 */
+    .mask {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(16, 30, 56, .86) 0%, rgba(16, 30, 56, .58) 45%, rgba(16, 30, 56, .38) 100%);
     }
 
-    .mwarn{
-        margin-top: 10px;
+    .login-box {
+        position: relative;
+        width: 400px;
+        padding: 38px 36px 26px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, .97);
+        box-shadow: 0 24px 60px rgba(8, 18, 40, .35);
     }
 
-    .demo-ruleForm{
-        margin: 10px 30px;
+    .login-brand {
+        text-align: center;
+        margin-bottom: 26px;
     }
 
-
-
-
-
-    .clearfix:before,
-    .clearfix:after {
-        display: table;
-        content: "";
-    }
-    .clearfix:after {
-        clear: both
+    .login-brand i {
+        font-size: 34px;
+        color: #2f6bff;
     }
 
-    .box-card {
-        width: 300px;
-        background-color: rgba(255, 255, 255, 0.4);
+    .login-brand h1 {
+        margin: 10px 0 6px;
+        font-size: 22px;
+        font-weight: 600;
+        color: #1f2d3d;
+        letter-spacing: 1px;
     }
 
+    .login-brand p {
+        margin: 0;
+        font-size: 12px;
+        color: #9aa8bd;
+        letter-spacing: .3px;
+    }
+
+    .login-form >>> .el-input__inner {
+        height: 44px;
+        line-height: 44px;
+        border-radius: 10px;
+    }
+
+    .login-form >>> .el-form-item {
+        margin-bottom: 20px;
+    }
+
+    .login-btn {
+        width: 100%;
+        height: 44px;
+        border-radius: 10px;
+        font-size: 15px;
+        letter-spacing: 4px;
+    }
+
+    .reset-btn {
+        width: 100%;
+        height: 38px;
+        margin: 12px 0 0;
+        border-radius: 10px;
+        color: #5a6b82;
+    }
+
+    .login-form >>> .el-form-item:last-child {
+        margin-bottom: 8px;
+    }
+
+    .login-tip {
+        margin-top: 6px;
+        padding-top: 14px;
+        border-top: 1px dashed #e6ebf3;
+        font-size: 12px;
+        color: #8ea0b8;
+        line-height: 20px;
+        text-align: center;
+    }
+
+    .login-tip p {
+        margin: 2px 0;
+    }
+
+    .login-tip i {
+        color: #f79009;
+        margin-right: 2px;
+    }
+
+    .login-footer {
+        position: absolute;
+        bottom: 22px;
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        color: rgba(255, 255, 255, .55);
+    }
 </style>
